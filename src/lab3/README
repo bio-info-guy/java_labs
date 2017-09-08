@@ -1,0 +1,4 @@
+The ToDo class is a background thread running a timer which helps exits the program after a certain amount of seconds 
+
+Within the AA_quiz class there is a ShutDownHook class which is used to print output once the terminate signal is recieved,
+this piece of code was found online (from: http://techno-terminal.blogspot.in/2015/08/shutdown-hooks.html) and modified for use.
