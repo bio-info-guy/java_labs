@@ -5,8 +5,8 @@ import java.util.TimerTask;
 
 public class ToDo  {
   Timer timer;
-  int num_right;
-  public ToDo ( int seconds, int num )   
+  int num_right[];
+  public ToDo ( int seconds, int num[] )   
   {
 	this.num_right = num;
     timer = new Timer (  ) ;
@@ -16,15 +16,15 @@ public class ToDo  {
 
   class ToDoTask extends TimerTask  
   {
-	 int num_right;	  
-	 public ToDoTask ( int num ) 
+	 int num_right[];	  
+	 public ToDoTask ( int num[] ) 
 	 {
 		 this.num_right = num;
 	 }
     public void run (  )   
     {
-    	  System.out.println("you got this many right: "+ this.num_right);
-      System.out.println ( "\nTIME FOR RECKONING!" ) ;
+    	  System.out.println ( "\nTIME FOR RECKONING!" );
+    	  System.out.println("you got this many right: "+ this.num_right[0]);  
       System.exit(0);
      // timer.cancel (  ) ; //Terminate the thread
     }

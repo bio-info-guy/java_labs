@@ -1,13 +1,12 @@
 package lab3;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import lab3.ToDo;
 
 public class AA_quiz 
 {
-	int num_right = 0; 
+	int[] num_right = {0}; 
 	public static String[] SHORT_NAMES = 
 		{
 		"A","R", "N", "D", "C", "Q", "E", 
@@ -61,7 +60,6 @@ public class AA_quiz
 		}
 		public void run() 
 		{  
-			System.out.println("you got this many right: "+ Collections.frequency(this.state,"CORRECT"));
 			System.out.println("here are your results ");
 			System.out.println("question\tyours\tcorrect ");
 			for (int x =0; x < this.questions.size(); x++) 
@@ -81,7 +79,8 @@ public class AA_quiz
 		while (correct == true) {
 			if (wrong == true || elapsed > tlimit*1000) 
 			{
-				System.out.println("you got this many right: "+ num_right);
+				System.out.println("oh my");
+				System.out.println("you got this many right: "+ this.num_right[0]);
 				System.exit(0);
 			}
 			else 
@@ -107,7 +106,7 @@ public class AA_quiz
 					String aChar = "" + aString.charAt(0);
 					if( aChar.equalsIgnoreCase(SHORT_NAMES[index]))
 					{
-						this.num_right++;;
+						this.num_right[0]++;
 					}
 					else
 					{
@@ -167,6 +166,7 @@ public class AA_quiz
 					if( aChar.equalsIgnoreCase(SHORT_NAMES[index])) 
 					{			
 						state.add("CORRECT");
+						this.num_right[0]++;
 					}
 					else 
 					{
