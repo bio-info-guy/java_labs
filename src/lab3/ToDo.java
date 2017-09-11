@@ -5,26 +5,19 @@ import java.util.TimerTask;
 
 public class ToDo  {
   Timer timer;
-  int num_right[];
-  public ToDo ( int seconds, int num[] )   
+  public ToDo ( int seconds )   
   {
-	this.num_right = num;
     timer = new Timer (  ) ;
-    timer.schedule ( new ToDoTask ( this.num_right ) , seconds*1000 ) ;
+    timer.schedule ( new ToDoTask () , seconds*1000 ) ;
   }
   
 
   class ToDoTask extends TimerTask  
-  {
-	 int num_right[];	  
-	 public ToDoTask ( int num[] ) 
-	 {
-		 this.num_right = num;
-	 }
+  {  
     public void run (  )   
     {
     	  System.out.println ( "\nTIME FOR RECKONING!" );
-    	  System.out.println("you got this many right: "+ this.num_right[0]);  
+    	  System.out.println("you got this many right: "+ AA_quiz.num_right);  
       System.exit(0);
      // timer.cancel (  ) ; //Terminate the thread
     }

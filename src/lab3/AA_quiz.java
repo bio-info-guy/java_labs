@@ -6,7 +6,7 @@ import lab3.ToDo;
 
 public class AA_quiz 
 {
-	int[] num_right = {0}; 
+	public static int num_right = 0; 
 	public static String[] SHORT_NAMES = 
 		{
 		"A","R", "N", "D", "C", "Q", "E", 
@@ -79,8 +79,7 @@ public class AA_quiz
 		while (correct == true) {
 			if (wrong == true || elapsed > tlimit*1000) 
 			{
-				System.out.println("oh my");
-				System.out.println("you got this many right: "+ this.num_right[0]);
+				System.out.println("you got this many right: "+ AA_quiz.num_right);
 				System.exit(0);
 			}
 			else 
@@ -106,7 +105,7 @@ public class AA_quiz
 					String aChar = "" + aString.charAt(0);
 					if( aChar.equalsIgnoreCase(SHORT_NAMES[index]))
 					{
-						this.num_right[0]++;
+						AA_quiz.num_right++;
 					}
 					else
 					{
@@ -166,7 +165,7 @@ public class AA_quiz
 					if( aChar.equalsIgnoreCase(SHORT_NAMES[index])) 
 					{			
 						state.add("CORRECT");
-						this.num_right[0]++;
+						AA_quiz.num_right++;
 					}
 					else 
 					{
@@ -192,12 +191,12 @@ public class AA_quiz
 			tlimit = Integer.valueOf(System.console().readLine());
 			System.out.println("how many questions would you like: ");
 			int qlimit = Integer.valueOf(System.console().readLine());
-			new ToDo ( tlimit, quiz.num_right);
+			new ToDo ( tlimit);
 			quiz.custom_quiz(tlimit*1000, qlimit);
 		}
 		else 
 		{
-			new ToDo ( tlimit , quiz.num_right) ;
+			new ToDo ( tlimit ) ;
 			quiz.sud_death(tlimit);
 
 		}
