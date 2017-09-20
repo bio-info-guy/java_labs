@@ -3,6 +3,10 @@ package lab4;
 import java.io.*; 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+
 public class FastaSequence
 {
 	private BufferedReader reader = null;
@@ -15,7 +19,7 @@ public class FastaSequence
 		ReadOneSequence(filepath);
 		this.initiate = Boolean.FALSE;		
 	}
-        public FastaSequence(FastaSequence fa)//allows for assigning one fastasequence with the values of another
+    public FastaSequence(FastaSequence fa)//allows for assigning one FastaSequence with the values of another
 	{
 		this.sequence = fa.sequence;
 		this.header = fa.header;
@@ -134,7 +138,32 @@ public class FastaSequence
 		}
 		return seqlist;
 	}
+	//This is the method for lab5
+	public static void uniqueFasta2File(String infile, String outfile) throws Exception//lab5 static method
+	{
 
+		FastaSequence seq = new FastaSequence(infile);
+		Map<String, Integer> map= new TreeMap<String, Integer>();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(outfile));
+		while(seq.sequence != null)
+		{
+			Integer count = map.get(seq.getSequence());
+			if (count==null)
+			{
+				count=0;
+			}
+			count++;
+			map.put(seq.getSequence(), count);
+		seq.ReadNextSeq();
+		}
+		for (String key: map.keySet())
+		{
+			bw.write(">"+map.get(key)+"\n");
+			bw.write(key+"\n");
+		}
+		bw.close();
+	}
+	//Main method
 	public static void main(String[] args) throws Exception, FileNotFoundException, IOException 
 	{
 	    FastaSequence se = new FastaSequence("/Users/suyangqi/git/java_labs/ERCC92.fa");
@@ -159,5 +188,6 @@ public class FastaSequence
 		    System.out.println(fs.getSequence());
 		    System.out.println(fs.getGCRatio());
 		}
+	    FastaSequence.uniqueFasta2File("/Users/suyangqi/git/java_labs/test.fa", "/Users/suyangqi/git/java_labs/test1.fa");
 	}
 }
