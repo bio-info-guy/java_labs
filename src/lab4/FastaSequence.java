@@ -1,4 +1,4 @@
-package lab3;
+package lab4;
 
 import java.io.*; 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class FastaSequence
 		ReadOneSequence(filepath);
 		this.initiate = Boolean.FALSE;		
 	}
-	public FastaSequence(FastaSequence fa)
+        public FastaSequence(FastaSequence fa)//allows for assigning one fastasequence with the values of another
 	{
 		this.sequence = fa.sequence;
 		this.header = fa.header;
@@ -140,29 +140,27 @@ public class FastaSequence
 
 	public static void main(String[] args) throws Exception, FileNotFoundException, IOException 
 	{
-    FastaSequence se = new FastaSequence("/Users/suyangqi/git/java_labs/ERCC92.fa");
-	System.out.println(se.getHeader());
-	System.out.println(se.getSequence());
-	System.out.println(se.getGCRatio());
-	se.ReadNextSeq();
-	System.out.println(se.getHeader());
-	System.out.println(se.getSequence());
-	System.out.println(se.getGCRatio());
-	se.ReadNextSeq();
-	System.out.println(se.getHeader());
-	System.out.println(se.getSequence());
-	System.out.println(se.getGCRatio());
+	    FastaSequence se = new FastaSequence("/Users/suyangqi/git/java_labs/ERCC92.fa");
+	    System.out.println(se.getHeader());
+	    System.out.println(se.getSequence());
+	    System.out.println(se.getGCRatio());
+	    se.ReadNextSeq();
+	    System.out.println(se.getHeader());
+	    System.out.println(se.getSequence());
+	    System.out.println(se.getGCRatio());
+	    se.ReadNextSeq();
+	    System.out.println(se.getHeader());
+	    System.out.println(se.getSequence());
+	    System.out.println(se.getGCRatio());
 	
 
-	List<FastaSequence> fastaList = FastaSequence.readFastaFile("/Users/suyangqi/git/java_labs/ERCC92.fa");
+	    List<FastaSequence> fastaList = FastaSequence.readFastaFile("/Users/suyangqi/git/java_labs/ERCC92.fa");
 
-	for( FastaSequence fs : fastaList)
-	{
-	System.out.println(fs.getHeader());
-	System.out.println(fs.getSequence());
-	System.out.println(fs.getGCRatio());
+	    for( FastaSequence fs : fastaList)
+		{
+		    System.out.println(fs.getHeader());
+		    System.out.println(fs.getSequence());
+		    System.out.println(fs.getGCRatio());
+		}
 	}
-	}
-
-
 }
