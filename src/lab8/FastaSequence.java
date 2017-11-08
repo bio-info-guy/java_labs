@@ -21,17 +21,27 @@ public class FastaSequence implements Comparable<FastaSequence>
 		set = Collections.unmodifiableSet(mySet);
 	}
 	
-	public void countAlphabets(Map<Character, Integer> ct)
+	public void countAlphabets(int[] ct)
 	{
 		for (char s : this.sequence.toLowerCase().toCharArray())
 		{
 			if(s != 'a' & s != 'g' & s != 't' & s != 'c' )
 			{
-				ct.put('n', ct.get('n')+1);
+				ct[4]++;
 			}
 			else
 			{
-				ct.put(s, ct.get(s)+1);
+				switch (s)
+				{
+				case 'a': ct[0]++;
+				break;
+				case 'c': ct[1]++;
+				break;
+				case 't': ct[2]++;
+				break;
+				case 'g': ct[3]++;
+				break;
+				}
 			}
 			
 		}

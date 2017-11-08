@@ -19,15 +19,6 @@ public class FastaFileWorker implements Runnable {
 	private static Integer T = 0;
 	private static Integer G = 0;
 	private static Integer N = 0;
-	private static final Map<Character, Integer> counter = Collections.synchronizedMap(new HashMap<Character, Integer>());
-	static
-	{
-		counter.put('a', 0);
-		counter.put('t', 0);
-		counter.put('c', 0);
-		counter.put('g', 0);
-		counter.put('n', 0);	
-	}
 	
 	public FastaFileWorker(String path, Semaphore semaphore)
 	{
@@ -39,26 +30,26 @@ public class FastaFileWorker implements Runnable {
 	{
 		try
 		{
-			Map<Character, Integer> map = FastaFileHandler.fileAlphaCounter(path);
+			int[] map = FastaFileHandler.fileAlphaCounter(path);
 			synchronized (A)
 			{
-				A = A+map.get('a');
+				A = A+map[0];
 			}
 			synchronized (C)
 			{
-				C = C+map.get('c');
+				C = C+map[1];
 			}
 			synchronized (T)
 			{
-				T = T+map.get('t');
+				T = T+map[2];
 			}
 			synchronized (G)
 			{
-				G = G+map.get('g');
+				G = G+map[3];
 			}
 			synchronized (N)
 			{
-				N = N+map.get('n');
+				N = N+map[4];
 			}
 			this.s.release();
 		}
@@ -73,23 +64,29 @@ public class FastaFileWorker implements Runnable {
 		long startTime = System.currentTimeMillis();
 		String[] fileNames = DIRPATH.list();
 		Semaphore semaphore = new Semaphore(NUM_WORKERS);
+		
 		for ( String fileName :fileNames)
 		{
+			if (fileName.startsWith("D5"))
+			{
 			semaphore.acquire();
 			String filepath = DIRPATH.getAbsolutePath()+"/"+fileName;
 			FastaFileWorker w = new FastaFileWorker(filepath, semaphore);
 			new Thread(w).start();
+			}
 		}
+		
 		int numAcquired= 0;
 		while (numAcquired < NUM_WORKERS)
 		{
 			semaphore.acquire();
 			numAcquired++;
 		}
-		System.out.println(A);
 		System.out.println("Time "+((System.currentTimeMillis() - startTime)/1000f));
-		
-		
+		System.out.println("A: "+A);
+		System.out.println("C: "+C);
+		System.out.println("T: "+T);
+		System.out.println("G: "+G);
+		System.out.println("N: "+N);
 	}
-	
 }

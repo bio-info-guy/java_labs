@@ -8,13 +8,12 @@ import lab8.MultiThreadFastaStreamer;
 public class FastaFileHandler
 {
 	//for lab 8
-	public static Map<Character, Integer> fileAlphaCounter(String filepath) throws Exception
+	public static int[] fileAlphaCounter(String filepath) throws Exception
 	{
-		Map<Character, Integer> ct = new HashMap<Character, Integer>();
-		ct.putIfAbsent('a', 0);ct.putIfAbsent('g', 0);ct.putIfAbsent('c', 0);ct.putIfAbsent('t', 0);ct.putIfAbsent('n', 0);
+		int[] ct = new int[5];
+		ct[0] = 0; ct[1] = 0; ct[2] = 0; ct[3] = 0; ct[4] = 0;
 		MultiThreadFastaStreamer faReader = new MultiThreadFastaStreamer(filepath);
 		FastaSequence fa0 = faReader.read();
-		
 		while(fa0.getSequence() != null)
 		{	
 			fa0.countAlphabets(ct);
