@@ -4,10 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -91,8 +93,8 @@ public class PrimeNumGen extends JFrame
 					}
 				}});
 		}
-	//
-	public static boolean isPrime( int i)
+	//Naive way of finding primes, easily speed up using 4 threads vs only using 1
+	public static boolean isPrime( int i) 
 	{
 		for( int x = 2; x < i; x++)
 			if( i % x == 0  )
@@ -103,33 +105,24 @@ public class PrimeNumGen extends JFrame
 	
 	/*
 	 * Finds primes by looping over a known list of integers that is being updated by other threads at the same time
+	 * ( difficult to implement using only 4 threads)
+	 * Thread 1 might be working on a prime that is the only factor of Thread 3, in which case Thread 3 will fail to be identified as non-prime
 	 */
 	public static boolean isPrimeSmart( Integer i, List<Integer> s)
 	{
-		Integer y = 0;	
+		Integer y = 1;	
 		for( Integer x : s)
 			{
-				if (x > i)//if current integer in list is larger than integer being queried, move to next integer
-				{
-					continue;
-				}
-				y = x;
-				//cache.add(y);
+				if(x > y)
+					y=x;
 				if(  i % x == 0  )
 				{			
 					return false;
 				}
 			}
-		/*
-		 Within single threads, the following codes aren't necessary because the list of primes will always be up to date
-		*/	
-		//starting from the last known integer that is smaller than queried integer i
-		//perform modular operation up to i-1
 		while (y < i-1)
 		{
-
 			y++;
-			//cache.add(y);
 			if(  i % y == 0  )
 				return false;
 		}
@@ -152,11 +145,12 @@ public class PrimeNumGen extends JFrame
 		
 		public void run()
 		{
-			try {
+			try {		
 				long lastUpdate = System.currentTimeMillis();
 				ccset.add(2);
 				long startTime = System.currentTimeMillis();
-				for (int i = 3; i < max && ! cancel; i++) 
+				int j=1;
+				for (int i = 1; i <= NUM_WORKERS && ! cancel; i++) 
 				{
 					/*
 					 *PROBLEM:
@@ -164,11 +158,11 @@ public class PrimeNumGen extends JFrame
 					than that of simply looping over the list of known primes	
 					WHY?			
 					*/
-					
-					
+					j=j+2;				
 					this.semaphore.acquire();
-					PrimeFinder p = new PrimeFinder(ccset, semaphore, i);
+					PrimeFinder p = new PrimeFinder(ccset, semaphore, j, max, NUM_WORKERS);
 					new Thread(p).start();	
+					
 					
 					/*
 					The following uncommented code loops over a 
@@ -182,11 +176,14 @@ public class PrimeNumGen extends JFrame
 						ccset.add(i);
 					}
 					*/
-					
-					
+				}	
+				
+
+				while(!this.ccset.contains(-1))			
+				{
 					if( System.currentTimeMillis() - lastUpdate > 500)
 					{
-						final String outString= "Found " + ccset.size() + " in " + i + " of " + max;
+						final String outString= "Found " + ccset.size() + " Primes in " +  max;
 						
 						SwingUtilities.invokeLater( new Runnable()
 						{
@@ -200,17 +197,19 @@ public class PrimeNumGen extends JFrame
 						lastUpdate = System.currentTimeMillis();	
 					}
 				}
+				
+				
 				int numAcquired= 0;
 				while (numAcquired < NUM_WORKERS)
 				{
 					this.semaphore.acquire();
 					numAcquired++;
 				}
-				System.out.println(ccset.size());
+				
+				System.out.println(ccset.size()-1);
 				System.out.println("Time "+((System.currentTimeMillis() - startTime)/1000f));
 				final StringBuffer buff = new StringBuffer();
-			
-				for( Integer i2 : ccset)
+				for( Object i2 : ccset)
 					buff.append(i2 + "\n");
 			
 				if( cancel)
@@ -249,15 +248,20 @@ class PrimeFinder implements Runnable
 	private List<Integer> ccset;
 	private Semaphore semaphore;
 	private Integer num;
-	public PrimeFinder(List<Integer> knownprimes, Semaphore s, Integer anumber)
+	private Integer threads;
+	private Integer max;
+	private static AtomicLong current;
+	public PrimeFinder(List<Integer> knownprimes, Semaphore s, Integer anumber, Integer max, Integer threads)
 	{
 		this.ccset = knownprimes;
 		this.semaphore = s;
-		num = anumber;
+		this.num = anumber;
+		this.max = max;
+		this.threads = threads;
 		
 	}
 
-	private boolean isPrimeSmart( Integer i)
+	private boolean isPrimeSmart( Integer i)// still a working progress, need workaround 
 	{
 		return PrimeNumGen.isPrimeSmart(i, this.ccset);
 	}
@@ -270,14 +274,20 @@ class PrimeFinder implements Runnable
 	
 	public void run()
 	{
-		try {
-			if (isPrimeSmart(this.num))
+		try 
+		{
+			while (this.num <= this.max)
 			{
-				//synchronized(this.ccset)
-				//{
+				if (isPrime(this.num))
+				{
 					this.ccset.add(this.num);
-				//}
-			}
+				}
+				this.num=this.num+2*this.threads;
+				if( this.num >= this.max & !this.ccset.contains(-1))
+				{
+					this.ccset.add(-1);
+				}
+			}	
 			this.semaphore.release();
 		} 
 		catch (Exception e) {
